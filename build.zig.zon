@@ -1,0 +1,11 @@
+.{
+    .name = .r4os_driver_virtiorng,
+    .version = "0.1.0",
+    .fingerprint = 0xb4c103bd5efaf80c,
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{ .r4os_sdk = .{
+        .url = "https://github.com/R4OSDev/r4os-sdk/archive/0e645840244e5dc5dc76d43eb513931ebcd28e0a.tar.gz",
+        .hash = "r4os_sdk-0.64.52-NnPzAhZpFgHoUTuMnydHVJV-_TY8YOJbCxY1iFXkWO1r",
+    } },
+    .paths = .{ "LICENSE", "NOTICE", "README.md", "build.zig", "build.zig.zon", "module.R4MF", "src", "Build.sh", "Build.bat", "Build.ps1", "Settings.R4S" },
+}

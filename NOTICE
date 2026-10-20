@@ -1,0 +1,3 @@
+R4OS Virtio RNG driver. Copyright R4OS contributors.
+Implements the OASIS VIRTIO 1.3 entropy device and modern PCI split queues.
+Uses the existing R4OS SDK and owned memory/PCI/DMA interfaces.
