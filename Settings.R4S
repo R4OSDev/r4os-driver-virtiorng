@@ -1,6 +1,8 @@
-# Relative to this repository; Zig relative to DevKit.
+﻿# Relative to this repository; Zig relative to DevKit.
 SDK_ROOT=../../SDK
 CONTRACT_ROOT=../../Contract
 DEVKIT_ROOT=../../../DevKit
 ARTIFACTS_ROOT=../../../Artifacts/Modules/VirtioRng
 ZIG_ROOT=Toolchains/Zig
+
+LIBRARIES_ROOT=../../Libraries
