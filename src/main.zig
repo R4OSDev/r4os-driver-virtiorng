@@ -3,14 +3,14 @@ const a = r4os.abi;
 const Transport = @import("transport.zig").Transport;
 const queue = @import("queue.zig");
 comptime {
-    asm (r4os.r4dev.driverEntriesAsm("virtrng_init", "virtrng_shutdown"));
+    if (!@import("builtin").is_test) asm (r4os.technical2.driverEntriesAsm("virtrng_init", "virtrng_shutdown"));
 }
 var transport: Transport = .{};
 var entropy: ?r4os.driver_entropy.Context = null;
 var registration: u64 = 0;
 
-export fn virtrng_init(api: *const a.DriverApi) callconv(.c) i32 {
-    const ctx = r4os.r4dev.DriverContext.init(api);
+export fn virtrng_init(api: *const r4os.r4dev.DriverApi2) callconv(.c) i32 {
+    const ctx = r4os.r4dev.DriverContext2.init(api);
     const resources = ctx.resources() orelse return -1;
     entropy = resources.entropy() orelse return -1;
     transport.discover(api) catch |err| {
@@ -46,7 +46,7 @@ export fn virtrng_shutdown() callconv(.c) i32 {
     if (transport.api == null) return 0;
     if (!transport.release()) return a.entropy_error_retained;
     if (transport.owned) {
-        const ctx = r4os.r4dev.DriverContext.init(transport.api.?);
+        const ctx = r4os.r4dev.DriverContext2.init(transport.api.?);
         ctx.logInfo("VIRTRNG shutdown: reset/busmaster readbacks accepted; DMA and MMIO released");
     }
     return 0;

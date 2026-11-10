@@ -4,7 +4,7 @@ const r4os = @import("r4os");
 const a = r4os.abi;
 const Transport = @import("transport.zig").Transport;
 const Peer = struct {
-    var api_bytes: [@sizeOf(a.DriverApi)]u8 align(8) = @splat(0);
+    var api_bytes: [@sizeOf(r4os.r4dev.DriverApi2)]u8 align(8) = @splat(0);
     var config: [256]u8 = @splat(0);
     var mmio: [16384]u8 align(4096) = @splat(0);
     var dma: [8192]u8 align(4096) = @splat(0);
@@ -15,7 +15,7 @@ const Peer = struct {
     var waits: u32 = 0;
     var instant: u64 = 100;
     var deny_reset = false;
-    fn setup() *const a.DriverApi {
+    fn setup() *const r4os.r4dev.DriverApi2 {
         @memset(&api_bytes, 0);
         @memset(&config, 0);
         @memset(&mmio, 0);
@@ -27,10 +27,10 @@ const Peer = struct {
         waits = 0;
         instant = 100;
         deny_reset = false;
-        const api: *a.DriverApi = @ptrCast(&api_bytes);
-        api.magic = a.driver_magic;
-        api.version = a.driver_api_version;
-        api.size = @sizeOf(a.DriverApi);
+        const api: *r4os.r4dev.DriverApi2 = @ptrCast(&api_bytes);
+        api.magic = r4os.technical2.abi.driver_magic;
+        api.version = r4os.technical2.abi.driver_version;
+        api.size = @sizeOf(r4os.r4dev.DriverApi2);
         api.resource_query = resources;
         api.gfx_memory_query = memory;
         api.pci_device_count = deviceCount;

@@ -21,7 +21,7 @@ pub fn fill(state: *State, hw: anytype, out: []u8, receipt: *a.EntropyDeviceRece
     receipt.flags |= a.entropy_receipt_flag_started;
     var done: usize = 0;
     var in_flight = false;
-    var polls: u32 = 0;
+    var budget = @import("r4os").driver_poll_budget.DriverPollBudget.initIterations(4096, .task);
     while (done < out.len) {
         const status = hw.status();
         const now = hw.now();
@@ -57,8 +57,7 @@ pub fn fill(state: *State, hw: anytype, out: []u8, receipt: *a.EntropyDeviceRece
             receipt.flags |= a.entropy_receipt_flag_used | a.entropy_receipt_flag_length_verified;
         } else {
             // Secondary finite guard if the functional clock stops advancing.
-            polls += 1;
-            if (polls > 4096) return fail(hw, out, receipt, a.entropy_error_timeout, true);
+            if (budget.step(null, false) != .proceed) return fail(hw, out, receipt, a.entropy_error_timeout, true);
             hw.wait();
         }
     }

@@ -14,7 +14,7 @@ const dma_bytes = 0x2000;
 pub const Error = error{ NotFound, Invalid, Mapping, Rejected, NoMemory, FirmwareOwned, Retained };
 
 pub const Transport = struct {
-    api: ?*const a.DriverApi = null,
+    api: ?*const r4os.r4dev.DriverApi2 = null,
     resources: ?r4os.driver_resources.Context = null,
     memory: ?r4os.driver_memory.Context = null,
     pci: a.PciDeviceInfo = .{},
@@ -32,12 +32,13 @@ pub const Transport = struct {
     quiesced: bool = false,
     saved_command: ?u16 = null,
 
-    fn context(self: *const Transport) r4os.r4dev.DriverContext {
-        return r4os.r4dev.DriverContext.init(self.api.?);
+    fn context(self: *const Transport) r4os.r4dev.DriverContext2 {
+        return r4os.r4dev.DriverContext2.init(self.api.?);
     }
-    pub fn discover(self: *Transport, api: *const a.DriverApi) Error!void {
+    pub fn discover(self: *Transport, api: *const r4os.r4dev.DriverApi2) Error!void {
         self.api = api;
         const ctx = self.context();
+        if (!ctx.requires(.{ "resource_query", "gfx_memory_query", "pci_device_at", "pci_device_count", "pci_read_config32", "pci_write_config32", "pci_enable_bus_master", "alloc_dma_region", "free_dma_region", "wait_ticks" })) return error.Mapping;
         self.resources = ctx.resources() orelse return error.Mapping;
         self.memory = ctx.memory() orelse return error.Mapping;
         var found = false;
@@ -222,10 +223,10 @@ pub const Transport = struct {
         return true;
     }
 };
-fn config8(ctx: *const r4os.r4dev.DriverContext, pci: a.PciDeviceInfo, offset: u16) u8 {
+fn config8(ctx: *const r4os.r4dev.DriverContext2, pci: a.PciDeviceInfo, offset: u16) u8 {
     return @truncate(ctx.pciReadConfig32(pci, offset & ~@as(u16, 3)) >> @as(u5, @intCast((offset & 3) * 8)));
 }
-fn barBase(ctx: *const r4os.r4dev.DriverContext, pci: a.PciDeviceInfo, index: u8) Error!u64 {
+fn barBase(ctx: *const r4os.r4dev.DriverContext2, pci: a.PciDeviceInfo, index: u8) Error!u64 {
     var prior: u8 = 0;
     while (prior < index) : (prior += 1) {
         const value = ctx.pciReadConfig32(pci, 0x10 + @as(u16, prior) * 4);

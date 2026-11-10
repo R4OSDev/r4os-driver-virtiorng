@@ -15,3 +15,5 @@ It performs no host random instructions or physical device I/O. `./Build.sh` bui
 Windows uses `Build.bat`; both invoke the same PowerShell orchestration.
 
 Protocol reference: [VIRTIO 1.3, entropy device](https://docs.oasis-open.org/virtio/virtio/v1.3/virtio-v1.3.html).
+
+Version0.1.1 uses real DriverInit2/DriverApi2 and R4DEV:Query2:2. Independent resource/entropy/MMIO records retain revision1 and the same owners. The shared pure SDK budget replaces only the existing4096 secondary retries across the entire request; the250ms bound, short-result receipts, reset/bus-master acknowledgements and retained uncertain DMA are unchanged.
